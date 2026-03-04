@@ -1,0 +1,42 @@
+﻿@{
+    List<Empleado> favoritos =
+                memoryCache.Get<List<Empleado>>("FAVORITOS");
+}
+
+<h1>Empleados favoritos</h1>
+<img src="~/images/fav.png" style="width: 100px; height: 100px" />
+<p>
+    <a asp-controller="Empleados"
+    asp-action="SessionEmpleadosV5">
+        Volver a Empleados V5
+    </a>
+</p>
+
+@if (favoritos == null)
+{
+    <h3 style="color:red">
+        No tenemos empleados favoritos
+    </h3>   
+}else{
+    <table class="table table-danger">
+        <thead>
+            <tr>
+                <th>Apellido</th>
+                <th>Oficio</th>
+                <th>Salario</th>
+                <th>Departamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in favoritos)
+            {
+                <tr>
+                    <td>@item.Apellido</td>
+                    <td>@item.Oficio</td>
+                    <td>@item.Salario</td>
+                    <td>@item.IdDepartamento</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

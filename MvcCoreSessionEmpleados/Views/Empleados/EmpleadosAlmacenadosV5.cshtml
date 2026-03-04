@@ -10,7 +10,12 @@
     </a>
 </p>
 
-<h2 style="color:fuchsia">@ViewData["MENSAJE"]</h2>
+@if (Context.Session.GetString("IDSEMPLEADOS") == null)
+{
+    <h1 style="color:red">
+        No existen empleados en Session
+    </h1>
+}
 
 @if (Model != null)
 {
@@ -22,6 +27,7 @@
                 <th>Oficio</th>
                 <th>Salario</th>
                 <th>Departamento</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +39,13 @@
                     <td>@item.Oficio</td>
                     <td>@item.Salario</td>
                     <td>@item.IdDepartamento</td>
+                    <td>
+                        <a asp-controller="Empleados"
+                           asp-action="EmpleadosAlmacenadosV5"
+                           asp-route-ideliminar="@item.IdEmpleado">
+                            Eliminar Session
+                       </a>
+                    </td>
                 </tr>
             }
         </tbody>

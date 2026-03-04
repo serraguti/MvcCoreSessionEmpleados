@@ -195,5 +195,65 @@ namespace MvcCoreSessionEmpleados.Controllers
                 return View(empleados);
             }
         }
+
+        public async Task<IActionResult> SessionEmpleadosV5
+            (int? idempleado)
+        {
+            if (idempleado != null)
+            {
+                //ALMACENAMOS LO MINIMO...
+                List<int> idsEmpleadosList;
+                if (HttpContext.Session.GetObject<List<int>>
+                    ("IDSEMPLEADOS") != null)
+                {
+                    //RECUPERAMOS LA COLECCION
+                    idsEmpleadosList =
+                        HttpContext.Session.GetObject<List<int>>("IDSEMPLEADOS");
+                }
+                else
+                {
+                    //CREAMOS LA COLECCION
+                    idsEmpleadosList = new List<int>();
+                }
+                //ALMACENAMOS EL ID DEL EMPLEADO
+                idsEmpleadosList.Add(idempleado.Value);
+                //ALMACENAMOS EN SESSION LOS DATOS
+                HttpContext.Session.SetObject("IDSEMPLEADOS", idsEmpleadosList);
+                ViewData["MENSAJE"] = "Empleados almacenados: "
+                    + idsEmpleadosList.Count;
+            }
+            //PARA EL DIBUJO, DEBEMOS COMPROBAR SI EXISTE SESSION O NO
+            List<int> idsEmpleados =
+                HttpContext.Session.GetObject<List<int>>("IDSEMPLEADOS");
+            if (idsEmpleados == null)
+            {
+                List<Empleado> empleados = await this.repo.GetEmpleadosAsync();
+                return View(empleados);
+            }
+            else
+            {
+                List<Empleado> empleados = await
+                    this.repo.GetEmpleadosNotSessionAsync(idsEmpleados);
+                return View(empleados);
+            }
+        }
+
+        public async Task<IActionResult> EmpleadosAlmacenadosV5()
+        {
+            //RECUPERAMOS LA COLECCION DE SESSION
+            List<int> idsEmpleados =
+                HttpContext.Session.GetObject<List<int>>("IDSEMPLEADOS");
+            if (idsEmpleados == null)
+            {
+                ViewData["MENSAJE"] = "No existen empleados en Session";
+                return View();
+            }
+            else
+            {
+                List<Empleado> empleados =
+                    await this.repo.GetEmpleadosSessionAsync(idsEmpleados);
+                return View(empleados);
+            }
+        }
     }
 }
